@@ -1,10 +1,10 @@
 //Importar las funciones del modelo de datos
-import { obtenerTodasLasTareas, obtenerTareaPorId, crearTarea, actualizarTarea, eliminarTarea } from '../data/tareasData.js';
+import { obtenerTodasLasTareas, obtenerTareaPorId, crearTarea, actualizarTarea, eliminarTarea } from '../data/tareasDataMongoDB.js';
 
-export const getTareas = (req, res) => {
+export const getTareas = async (req, res) => {
     try {
         const { completada } = req.query;
-        let tareas = obtenerTodasLasTareas();
+        let tareas = await obtenerTodasLasTareas();
 
         if (completada !== undefined) {
             const estaCompletada = completada === 'true';
@@ -21,10 +21,10 @@ export const getTareas = (req, res) => {
 };
 
 //Controlador para obtener una tarea por su ID
-export const getTareaById = (req, res) => {
+export const getTareaById = async (req, res) => {
     try {
         const { id } = req.params;
-        const tarea = obtenerTareaPorId(id);
+        const tarea = await obtenerTareaPorId(id);
 
         if (!tarea) {
             return res.status(404).json({ error: 'Tarea no encontrada' });
@@ -37,10 +37,10 @@ export const getTareaById = (req, res) => {
 };
 
 //Controlador para crear una nueva tarea
-export const createTarea = (req, res) => {
+export const createTarea = async (req, res) => {
     try {
         const { titulo, descripcion, completada } = req.body;
-        const nuevaTarea = crearTarea({
+        const nuevaTarea = await crearTarea({
             titulo: titulo.trim(),
             descripcion: descripcion ? descripcion.trim() : '',
             completada: completada || false
@@ -55,11 +55,11 @@ export const createTarea = (req, res) => {
     }
 }
 
-export const updateTarea = (req, res) => {
+export const updateTarea = async (req, res) => {
     try {
         const { titulo, descripcion, completada } = req.body;
 
-        const tareaActualizada = actualizarTarea(req.params.id, {
+        const tareaActualizada = await actualizarTarea(req.params.id, {
             titulo: titulo.trim(),
             descripcion: descripcion ? descripcion.trim() : '',
             completada: completada !== undefined ? completada : false
@@ -79,9 +79,9 @@ export const updateTarea = (req, res) => {
     }
 }
 
-export const deleteTarea = (req, res) => {
+export const deleteTarea = async (req, res) => {
     try {
-        const tareaEliminada = eliminarTarea(req.params.id);
+        const tareaEliminada = await eliminarTarea(req.params.id);
 
         if (!tareaEliminada) {
             return res.status(404).json({ error: 'Tarea no encontrada' });

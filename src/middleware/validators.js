@@ -1,12 +1,12 @@
+import mongoose from 'mongoose';
 
 export const validarTareaId = (req, res, next) => {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID de tarea inválido' });
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'ID inválido' });
     }
-    req.params.id = id;
     next();
-}
+};
 
 export const validarDatosTarea = (req, res, next) => {
     const { titulo } = req.body;
